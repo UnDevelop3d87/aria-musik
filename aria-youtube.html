@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ARIA — Bay Area</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#06080E;--s1:#090C15;--s2:#0D1120;--s3:#12172A;
+  --border:#151C2E;--border2:#0E1426;
+  --text:#DCE4F5;--muted:#3D4F6E;--dim:#1E2A40;
+  --r:#FF3737;--r2:#FF6B3D;
+  --gold:#C8A84B;--gold2:#E8C96A;
+  --blue:#1460FF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Sora',sans-serif;color:var(--text);display:flex;flex-direction:column;height:100vh}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+
+/* grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* glow bg */
+body::before{content:'';position:fixed;top:-20%;left:30%;width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(255,55,55,.04) 0%,transparent 70%);
+  pointer-events:none;z-index:0}
+
+#app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
+.body-wrap{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* ══ HEADER ══ */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:52px;flex-shrink:0;
+  background:rgba(6,8,14,.97);backdrop-filter:blur(30px);
+  border-bottom:1px solid var(--border2);z-index:100;position:relative;
+}
+.logo{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Archivo Black',sans-serif;font-size:22px;letter-spacing:.12em;
+  color:var(--text);
+}
+.lmark{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;position:relative;
+  background:linear-gradient(135deg,var(--r),var(--r2));
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 0 16px rgba(255,55,55,.45);
+}
+nav{display:flex;gap:1px}
+.nb{
+  background:none;border:none;cursor:pointer;color:var(--muted);
+  padding:5px 12px;border-radius:6px;
+  font-family:'Sora',sans-serif;font-size:12px;font-weight:600;
+  transition:all .16s;letter-spacing:.02em;
+}
+.nb:hover{color:var(--text);background:var(--s2)}
+.nb.on{color:var(--r2);background:var(--s2);border-bottom:2px solid var(--r)}
+.hr{display:flex;align-items:center;gap:8px}
+#srch{
+  background:var(--s2);border:1px solid var(--border);border-radius:7px;
+  padding:5px 11px;color:var(--text);font-size:12px;width:175px;outline:none;
+  font-family:'Sora',sans-serif;transition:border-color .2s;
+}
+#srch:focus{border-color:var(--r)}
+#srch::placeholder{color:var(--muted)}
+#bmw-btn{
+  display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:7px;
+  border:1px solid var(--border);background:var(--s2);cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);transition:all .2s;
+}
+#bmw-btn:hover{border-color:var(--blue);color:#6A9AFF}
+#bmw-btn.conn{border-color:rgba(21,101,255,.4);background:rgba(21,101,255,.07);color:#5A9AFF;animation:bpulse 2.5s ease-in-out infinite}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(21,101,255,.35)}50%{box-shadow:0 0 0 9px rgba(21,101,255,0)}}
+
+/* ══ SIDEBAR ══ */
+aside{
+  width:200px;flex-shrink:0;background:var(--s1);
+  border-right:1px solid var(--border2);
+  display:flex;flex-direction:column;overflow-y:auto;padding:12px 0 20px;
+}
+.sl{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.14em;padding:0 14px;margin:16px 0 6px}
+.si{
+  display:flex;align-items:center;gap:8px;padding:7px 13px;
+  cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);
+  transition:all .13s;border-left:2px solid transparent;
+}
+.si:hover{color:var(--text);background:var(--s2);border-left-color:var(--r)}
+.si.on{color:var(--r2);background:var(--s2);border-left-color:var(--r)}
+.si .ic{font-size:13px;width:17px;text-align:center}
+
+/* ══ MAIN ══ */
+main{flex:1;overflow-y:auto;padding:22px 24px 12px;min-width:0}
+.page{display:none}
+.page.on{display:block;animation:fu .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.pgtitle{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:.02em;line-height:1;margin-bottom:3px}
+.pgred{background:linear-gradient(135deg,var(--text) 35%,var(--r2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pgsub{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;margin-bottom:24px}
+
+/* BMW strip */
+#bstrip{
+  display:none;background:linear-gradient(135deg,#060C1C,#091525);
+  border:1px solid rgba(21,101,255,.2);border-radius:12px;
+  padding:12px 18px;margin-bottom:20px;
+  align-items:center;gap:18px;flex-wrap:wrap;
+}
+#bstrip.on{display:flex;animation:fu .3s both}
+.bsv{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--text);line-height:1}
+.bsv sub{font-size:9px;color:var(--blue);margin-left:2px;font-family:'DM Mono',monospace}
+.bsk{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);margin-top:2px;letter-spacing:.1em}
+
+/* Artist grid */
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:26px}
+.ac{
+  background:var(--s1);border:1px solid var(--border2);border-radius:10px;
+  overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;
+}
+.ac:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.7)}
+.ac-art{
+  width:100%;height:90px;display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo Black',sans-serif;font-size:30px;position:relative;overflow:hidden;
+}
+.ac-art::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)}
+.ac-info{padding:8px 10px}
+.ac-name{font-size:11px;font-weight:700}
+.ac-genre{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px}
+
+/* Section header */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.st{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em}
+.sa{background:none;border:none;color:var(--muted);font-size:9px;cursor:pointer;font-family:'DM Mono',monospace;transition:color .13s}
+.sa:hover{color:var(--r2)}
+
+/* Track list */
+.tlist{background:var(--s1);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:22px}
+.thdr{
+  display:grid;grid-template-columns:24px 34px 1fr 90px 48px 26px;
+  gap:9px;align-items:center;padding:7px 12px;
+  border-bottom:1px solid var(--border2);
+  font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;
+}
+.tr{
+  display:grid;grid-template-columns:24px 34px 1fr 90px 48px 26px;
+  gap:9px;align-items:center;padding:8px 12px;cursor:pointer;
+  transition:background .11s;
+}
+.tr:not(:last-child){border-bottom:1px solid var(--border2)}
+.tr:hover{background:var(--s2)}
+.tr.now{background:rgba(255,55,55,.04)}
+.tnum{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center}
+.tthumb{width:34px;height:34px;border-radius:5px;object-fit:cover;background:var(--s2)}
+.tinfo{overflow:hidden}
+.ttitle{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tartist{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tgenre{font-size:9px;color:var(--dim);font-family:'DM Mono',monospace}
+.tdur{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.lbtn{background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);transition:color .13s,transform .11s;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.lbtn:hover{transform:scale(1.2)}
+.lbtn.L{color:var(--r)}
+
+/* Playing bars */
+.viz{display:flex;align-items:flex-end;gap:2px;height:14px;justify-content:center}
+.vb{width:2px;border-radius:1px;background:var(--r)}
+.vb:nth-child(1){animation:vz .7s ease-in-out infinite}
+.vb:nth-child(2){animation:vz .5s ease-in-out .1s infinite}
+.vb:nth-child(3){animation:vz .8s ease-in-out .04s infinite}
+@keyframes vz{0%,100%{height:2px}50%{height:12px}}
+.viz.paused .vb{height:5px;animation:none}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.chip{
+  background:rgba(255,55,55,.06);border:1px solid rgba(255,55,55,.16);
+  color:#883322;border-radius:20px;padding:5px 12px;
+  font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .14s;
+}
+.chip:hover{background:rgba(255,55,55,.14);color:var(--r2)}
+
+.empty{padding:34px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* ══ YOUTUBE PLAYER ══ */
+#yt-wrap{position:fixed;bottom:78px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+#yt-player{width:100%;height:100%}
+
+/* ══ PLAYER BAR ══ */
+#pbar{
+  height:76px;flex-shrink:0;
+  background:rgba(4,5,10,.98);backdrop-filter:blur(30px);
+  border-top:1px solid var(--border2);
+  display:flex;align-items:center;padding:0 20px;gap:16px;
+  position:relative;z-index:200;
+}
+.np{display:flex;align-items:center;gap:10px;min-width:200px}
+#npart{width:42px;height:42px;border-radius:7px;object-fit:cover;background:var(--s2);flex-shrink:0}
+.npt{overflow:hidden}
+#nptitle{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+#npartist{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+#nplbtn{background:none;border:none;cursor:pointer;font-size:15px;color:var(--muted);transition:color .13s,transform .11s;padding:3px}
+#nplbtn:hover{transform:scale(1.2)}
+#nplbtn.L{color:var(--r)}
+
+.ctrls{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.cbtns{display:flex;align-items:center;gap:9px}
+.cb{background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;transition:color .13s,transform .11s;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%}
+.cb:hover{color:var(--text);transform:scale(1.1)}
+.cb.on{color:var(--r)}
+#playbtn{
+  width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--r),var(--r2));
+  color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 18px rgba(255,55,55,.45);transition:transform .11s,box-shadow .11s;
+}
+#playbtn:hover{transform:scale(1.07);box-shadow:0 7px 26px rgba(255,55,55,.6)}
+
+.pwrap{display:flex;align-items:center;gap:8px;width:100%;max-width:440px}
+.tlbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);min-width:30px}
+.tlbl.r{text-align:right}
+#prog{flex:1;height:3px;background:var(--dim);border-radius:2px;cursor:pointer;position:relative;transition:height .13s}
+#prog:hover{height:5px}
+#progf{height:100%;background:linear-gradient(90deg,var(--r),var(--r2));border-radius:2px;width:0%;position:relative}
+#progf::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%) scale(0);width:9px;height:9px;background:#fff;border-radius:50%;transition:transform .11s}
+#prog:hover #progf::after{transform:translateY(-50%) scale(1)}
+
+.pright{display:flex;align-items:center;gap:10px;min-width:185px;justify-content:flex-end}
+.vi{font-size:11px;color:var(--muted)}
+#vol{-webkit-appearance:none;width:72px;height:3px;background:var(--dim);border-radius:2px;outline:none;cursor:pointer}
+#vol::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;background:var(--r);border-radius:50%;cursor:pointer}
+.yt-badge{background:rgba(255,55,55,.08);border:1px solid rgba(255,55,55,.2);border-radius:5px;padding:2px 7px;font-family:'DM Mono',monospace;font-size:8px;color:#883322;letter-spacing:.08em}
+#bmini{display:none;align-items:center;gap:4px;background:rgba(21,101,255,.08);border:1px solid rgba(21,101,255,.22);border-radius:5px;padding:3px 8px;cursor:pointer}
+#bmini.on{display:flex}
+#bmini span{font-family:'DM Mono',monospace;font-size:8px;color:#5A9AFF}
+
+/* ══ BMW MODAL ══ */
+#bov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center}
+#bov.on{display:flex}
+#bmod{
+  background:#060B16;border:1px solid rgba(21,101,255,.22);
+  border-radius:18px;padding:28px 32px;max-width:400px;width:90%;
+  box-shadow:0 40px 80px rgba(0,0,0,.9);
+  animation:fu .3s cubic-bezier(.16,1,.3,1) both;
+}
+.mhdr{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.mcar{width:46px;height:46px;border-radius:12px;background:#0A1628;border:1px solid rgba(21,101,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px}
+.mtitle{font-family:'Archivo Black',sans-serif;font-size:22px;letter-spacing:.02em}
+.msub{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+.stbl{background:#04080F;border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:16px}
+.sr{display:flex;justify-content:space-between;margin-bottom:6px}
+.sr:last-child{margin-bottom:0}
+.sk{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim)}
+.sv{font-family:'DM Mono',monospace;font-size:9px;color:#4A82CC}
+.cbtn{width:100%;background:linear-gradient(135deg,var(--blue),#0A90FF);border:none;border-radius:10px;padding:12px;color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 7px 22px rgba(21,101,255,.35);transition:transform .11s,box-shadow .11s}
+.cbtn:hover{transform:scale(1.02);box-shadow:0 9px 28px rgba(21,101,255,.5)}
+.dbtn{width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;transition:border-color .13s,color .13s}
+.dbtn:hover{border-color:var(--r);color:#FF6666}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;text-align:center}
+.tv{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--text);line-height:1}
+.tv small{font-size:9px;color:var(--blue);margin-left:2px;font-family:'DM Mono',monospace}
+.tk{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);margin-top:2px;letter-spacing:.1em}
+.sring{width:44px;height:44px;border-radius:50%;margin:0 auto 12px;background:rgba(21,101,255,.1);border:2px solid rgba(21,101,255,.4);display:flex;align-items:center;justify-content:center;font-size:19px;animation:sp 1.1s ease-in-out infinite}
+@keyframes sp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.13);opacity:.7}}
+.stxt{font-family:'DM Mono',monospace;font-size:10px;color:#4A82CC}
+
+/* Toast */
+#toast{position:fixed;top:60px;right:16px;z-index:9999;border-radius:9px;padding:10px 15px;font-size:11px;font-weight:600;backdrop-filter:blur(20px);display:none;box-shadow:0 7px 28px rgba(0,0,0,.6)}
+#toast.on{display:block;animation:slideR .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes slideR{from{transform:translateX(14px);opacity:0}to{transform:translateX(0);opacity:1}}
+#toast.bmw{background:rgba(4,10,24,.96);border:1px solid rgba(21,101,255,.32);color:#5A9AFF}
+#toast.ok{background:rgba(3,18,10,.96);border:1px solid rgba(6,214,120,.28);color:#06D6A0}
+#toast.inf{background:rgba(6,8,14,.96);border:1px solid var(--border);color:var(--text)}
+#toast.err{background:rgba(18,4,6,.96);border:1px solid rgba(255,55,55,.28);color:var(--r)}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="toast"></div>
+
+<!-- BMW Modal -->
+<div id="bov" onclick="closeBMW(event)">
+  <div id="bmod">
+    <div class="mhdr">
+      <div class="mcar">🚗</div>
+      <div><div class="mtitle">BMW X5 F15</div><div class="msub">HiFi Stereo · Bluetooth 5.2</div></div>
+    </div>
+    <div id="bbody"></div>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="logo"><div class="lmark">▶</div>ARIA</div>
+  <nav>
+    <button class="nb on" onclick="pg('home',this)">Home</button>
+    <button class="nb" onclick="pg('browse',this)">Browse</button>
+    <button class="nb" onclick="pg('liked',this)">Liked</button>
+  </nav>
+  <div class="hr">
+    <input id="srch" placeholder="Search Bay Area…" oninput="onSearch(this.value)" onfocus="pg('browse',document.querySelectorAll('.nb')[1])"/>
+    <button id="bmw-btn" onclick="openBMW()"><span>🚗</span><span id="blbl">BMW X5</span></button>
+  </div>
+</header>
+
+<div class="body-wrap">
+<!-- Sidebar -->
+<aside>
+  <div class="sl">BAY AREA</div>
+  <div class="si on" onclick="loadList('bayarea','home-tracks');sa(this)"><span class="ic">🌉</span>Bay Mix</div>
+  <div class="si" onclick="loadList('e40','home-tracks');sa(this)"><span class="ic">🎤</span>E-40</div>
+  <div class="si" onclick="loadList('kehlani','home-tracks');sa(this)"><span class="ic">🎤</span>Kehlani</div>
+  <div class="si" onclick="loadList('her','home-tracks');sa(this)"><span class="ic">🎤</span>H.E.R.</div>
+  <div class="si" onclick="loadList('larryjune','home-tracks');sa(this)"><span class="ic">🎤</span>Larry June</div>
+  <div class="si" onclick="loadList('geazy','home-tracks');sa(this)"><span class="ic">🎤</span>G-Eazy</div>
+  <div class="si" onclick="loadList('mozzy','home-tracks');sa(this)"><span class="ic">🎤</span>Mozzy</div>
+  <div class="si" onclick="loadList('tooshort','home-tracks');sa(this)"><span class="ic">🎤</span>Too $hort</div>
+  <div class="si" onclick="loadList('kamaiyah','home-tracks');sa(this)"><span class="ic">🎤</span>Kamaiyah</div>
+  <div class="si" onclick="loadList('iamsu','home-tracks');sa(this)"><span class="ic">🎤</span>Iamsu!</div>
+  <div class="si" onclick="loadList('plo','home-tracks');sa(this)"><span class="ic">🎤</span>P-Lo</div>
+  <div class="si" onclick="loadList('nefpharaoh','home-tracks');sa(this)"><span class="ic">🎤</span>Nef the Pharaoh</div>
+  <div class="sl">VIBES</div>
+  <div class="si" onclick="loadList('hyphy','home-tracks');sa(this)"><span class="ic">🔥</span>Hyphy</div>
+  <div class="si" onclick="loadList('bayrnb','home-tracks');sa(this)"><span class="ic">💜</span>Bay R&B</div>
+  <div class="si" onclick="loadList('westcoast','home-tracks');sa(this)"><span class="ic">🌊</span>West Coast</div>
+  <div class="si" onclick="loadList('latenight','home-tracks');sa(this)"><span class="ic">🌙</span>Late Night</div>
+  <div class="si" onclick="loadList('oakland','home-tracks');sa(this)"><span class="ic">👑</span>Oakland</div>
+</aside>
+
+<main>
+  <!-- HOME -->
+  <div id="page-home" class="page on">
+    <div class="pgtitle pgred">Good Evening, Mac</div>
+    <div class="pgsub">BAY AREA · YOUTUBE · BMW X5 READY</div>
+
+    <div id="bstrip">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:34px;height:34px;border-radius:8px;background:#0A1628;border:1px solid rgba(21,101,255,.22);display:flex;align-items:center;justify-content:center;font-size:16px">🏎️</div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:#1460FF;letter-spacing:.1em">BMW X5 F15 · LIVE</div>
+          <div style="font-family:'Archivo Black',sans-serif;font-size:14px;letter-spacing:.04em">aptX HD · A2DP</div>
+        </div>
+      </div>
+      <div><div class="bsv" id="ls">0<sub>km/h</sub></div><div class="bsk">SPEED</div></div>
+      <div><div class="bsv" id="lr">800</div><div class="bsk">RPM</div></div>
+      <div><div class="bsv" id="lt">88<sub>°C</sub></div><div class="bsk">COOLANT</div></div>
+      <div><div class="bsv" id="lg">P</div><div class="bsk">GEAR</div></div>
+      <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:8px;color:#1A3A60">Dolby · iDrive</div>
+    </div>
+
+    <div class="sh"><div class="st">ARTISTS</div></div>
+    <div class="ag" id="agrid"></div>
+    <div class="sh"><div class="st">TRACKS</div><button class="sa" onclick="loadList('bayarea','home-tracks')">shuffle ↻</button></div>
+    <div id="home-tracks"><div class="empty">← Tap an artist to load tracks</div></div>
+  </div>
+
+  <!-- BROWSE -->
+  <div id="page-browse" class="page">
+    <div class="pgtitle pgred">Browse</div>
+    <div class="pgsub">YOUTUBE · REAL AUDIO · ZERO SETUP</div>
+    <div class="chips" id="chips"></div>
+    <div id="browse-tracks"><div class="empty">Search above or tap a chip</div></div>
+  </div>
+
+  <!-- LIKED -->
+  <div id="page-liked" class="page">
+    <div class="pgtitle pgred">Liked Songs</div>
+    <div class="pgsub" id="lct">0 TRACKS</div>
+    <div id="liked-tracks"></div>
+  </div>
+</main>
+</div>
+
+<!-- Hidden YouTube player -->
+<div id="yt-wrap"><div id="yt-player"></div></div>
+
+<!-- Player Bar -->
+<div id="pbar">
+  <div class="np">
+    <img id="npart" src="" alt=""/>
+    <div class="npt"><div id="nptitle">—</div><div id="npartist">Select a track</div></div>
+    <button id="nplbtn" onclick="likeCur()">♡</button>
+  </div>
+  <div class="ctrls">
+    <div class="cbtns">
+      <button class="cb" id="shuf" onclick="toggleShuffle()" title="Shuffle">⇌</button>
+      <button class="cb" onclick="prev()">⏮</button>
+      <button id="playbtn" onclick="togglePlay()">▶</button>
+      <button class="cb" onclick="next()">⏭</button>
+      <button class="cb" id="rep" onclick="toggleRepeat()" title="Repeat">↺</button>
+    </div>
+    <div class="pwrap">
+      <span class="tlbl" id="ct">0:00</span>
+      <div id="prog" onclick="seekTo(event)"><div id="progf"></div></div>
+      <span class="tlbl r" id="dt">0:00</span>
+    </div>
+  </div>
+  <div class="pright">
+    <span class="vi">🔊</span>
+    <input type="range" id="vol" min="0" max="100" value="80" oninput="setVol(this.value)"/>
+    <div class="yt-badge">YOUTUBE</div>
+    <div id="bmini" onclick="openBMW()"><span style="font-size:11px">🚗</span><span>X5</span></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  CURATED BAY AREA YOUTUBE TRACK LIBRARY
+//  Real YouTube video IDs — plays instantly
+// ══════════════════════════════════════════
+const LIBRARY = {
+  bayarea:[
+    {id:'VZt7J0iaUD0',title:'Choices (Yup)',       artist:'E-40',        genre:'Hyphy',   dur:227},
+    {id:'h2_ViDCDjgw',title:'Nights Like This',    artist:'Kehlani',     genre:'R&B',     dur:218},
+    {id:'tv9a6e9rXKc',title:'Focus',               artist:'H.E.R.',      genre:'R&B',     dur:232},
+    {id:'XNtTI3MJKyY',title:'Smooth Sailin',       artist:'Larry June',  genre:'Rap',     dur:198},
+    {id:'B6_iQvaIjXw',title:'Random',              artist:'G-Eazy',      genre:'Hip-Hop', dur:241},
+    {id:'7bMqGY9eTBQ',title:'Bladadah',            artist:'Mozzy',       genre:'Rap',     dur:205},
+    {id:'qlp4SHWa-wM',title:'Blow the Whistle',    artist:'Too $hort',   genre:'Hyphy',   dur:234},
+    {id:'lmc21V-zBq0',title:'How Does It Feel',    artist:'Kamaiyah',    genre:'R&B',     dur:196},
+    {id:'SXiSVQZLje8',title:'Kilt It',             artist:'Iamsu!',      genre:'HBK',     dur:208},
+    {id:'pDUPSNdmFew',title:'Bad Guy',             artist:'P-Lo',        genre:'Bay',     dur:222},
+    {id:'vJIULmMuEo0',title:'Get Out My Way',      artist:'Nef the Pharaoh',genre:'Vallejo',dur:189},
+    {id:'9EcjWd-O4jI',title:'Gas Pedal',           artist:'Sage the Gemini',genre:'Bay Rap',dur:231},
+  ],
+  e40:[
+    {id:'VZt7J0iaUD0',title:'Choices (Yup)',       artist:'E-40',genre:'Hyphy',dur:227},
+    {id:'f2GKoXmS2Ig',title:'Function',            artist:'E-40',genre:'Hyphy',dur:244},
+    {id:'oDyviiOIfEo',title:'Wait',                artist:'E-40',genre:'Hyphy',dur:218},
+    {id:'wq4oNB2ZSIY',title:"Loyalty and Betrayal",artist:'E-40',genre:'Rap',  dur:201},
+  ],
+  kehlani:[
+    {id:'h2_ViDCDjgw',title:'Nights Like This',   artist:'Kehlani',genre:'R&B',dur:218},
+    {id:'f8lmFSjbQzQ',title:'Gangsta',            artist:'Kehlani',genre:'R&B',dur:196},
+    {id:'CevxkCH8t1M',title:'Good Life',          artist:'Kehlani',genre:'R&B',dur:210},
+    {id:'SXiSVQZLje8',title:'CRZY',               artist:'Kehlani',genre:'R&B',dur:214},
+  ],
+  her:[
+    {id:'tv9a6e9rXKc',title:'Focus',              artist:'H.E.R.',genre:'R&B',dur:232},
+    {id:'6TE8zFGHdiE',title:'Best Part',          artist:'H.E.R.',genre:'R&B',dur:256},
+    {id:'6E7ZEDsNFkI',title:'Hard Place',         artist:'H.E.R.',genre:'R&B',dur:214},
+    {id:'xRjzFBpEDso',title:'I Used to Know Her', artist:'H.E.R.',genre:'R&B',dur:198},
+  ],
+  larryjune:[
+    {id:'XNtTI3MJKyY',title:'Smooth Sailin',      artist:'Larry June',genre:'Rap',dur:198},
+    {id:'G8Jjz1KJeaI',title:'Spinnin',            artist:'Larry June',genre:'Rap',dur:204},
+    {id:'dC_FK1VQHIU',title:'Cruise Tonite',      artist:'Larry June',genre:'Rap',dur:188},
+    {id:'sZiMEcpU5ss',title:'Diamonds Dancing',   artist:'Larry June',genre:'Rap',dur:212},
+  ],
+  geazy:[
+    {id:'B6_iQvaIjXw',title:'Random',             artist:'G-Eazy',genre:'Hip-Hop',dur:241},
+    {id:'XF8t2XTQQSI',title:'Me, Myself & I',     artist:'G-Eazy',genre:'Hip-Hop',dur:234},
+    {id:'W56T5GqMeaU',title:'No Limit',           artist:'G-Eazy',genre:'Hip-Hop',dur:218},
+    {id:'5rHDprPBVkw',title:'Him & I',            artist:'G-Eazy',genre:'Hip-Hop',dur:228},
+  ],
+  mozzy:[
+    {id:'7bMqGY9eTBQ',title:'Bladadah',           artist:'Mozzy',genre:'Rap',dur:205},
+    {id:'7_0PjUJEKBQ',title:'Substance Abuse',    artist:'Mozzy',genre:'Rap',dur:196},
+    {id:'h9V2MoNj9nU',title:'Blessed Be the Cheap',artist:'Mozzy',genre:'Rap',dur:214},
+    {id:'4A2zEM8XYOU',title:'Real Ones',          artist:'Mozzy',genre:'Rap',dur:201},
+  ],
+  tooshort:[
+    {id:'qlp4SHWa-wM',title:'Blow the Whistle',   artist:'Too $hort',genre:'Hyphy',dur:234},
+    {id:'ZbaCPtPCT5E',title:'Gettin It',          artist:'Too $hort',genre:'Rap',  dur:218},
+    {id:'OIVzuHh85zM',title:'Pimp Shit',          artist:'Too $hort',genre:'Rap',  dur:226},
+    {id:'c26V7dXn6lA',title:'Oakland',            artist:'Too $hort',genre:'Hyphy',dur:242},
+  ],
+  kamaiyah:[
+    {id:'lmc21V-zBq0',title:'How Does It Feel',   artist:'Kamaiyah',genre:'R&B',dur:196},
+    {id:'gvSMI1HqDuA',title:"I'm On",            artist:'Kamaiyah',genre:'R&B',dur:188},
+    {id:'U7mPqycQ0tQ',title:'Out the Bottle',     artist:'Kamaiyah',genre:'R&B',dur:204},
+    {id:'qIWA9_y2GGo',title:'Dont Judge Me',      artist:'Kamaiyah',genre:'R&B',dur:211},
+  ],
+  iamsu:[
+    {id:'SXiSVQZLje8',title:'Kilt It',            artist:'Iamsu!',genre:'HBK',dur:208},
+    {id:'pDUPSNdmFew',title:'Only That Real',     artist:'Iamsu!',genre:'HBK',dur:216},
+    {id:'rPZOd9GEp5U',title:'Ay Vamos',           artist:'Iamsu!',genre:'HBK',dur:199},
+    {id:'jtBqOeqTkCk',title:'4 That',            artist:'Iamsu!',genre:'HBK',dur:221},
+  ],
+  plo:[
+    {id:'pDUPSNdmFew',title:'Bad Guy',            artist:'P-Lo',genre:'Bay',dur:222},
+    {id:'_Cca_pKMIOM',title:'Vibrant',            artist:'P-Lo',genre:'Bay',dur:198},
+    {id:'TtNUkjxO2YA',title:'Slow Down',          artist:'P-Lo',genre:'Bay',dur:208},
+    {id:'mMQJyeGVQ1I',title:'Make It Rain',       artist:'P-Lo',genre:'Bay',dur:214},
+  ],
+  nefpharaoh:[
+    {id:'vJIULmMuEo0',title:'Get Out My Way',     artist:'Nef the Pharaoh',genre:'Vallejo',dur:189},
+    {id:'OxZzAWMNvBA',title:'Like Whoa',          artist:'Nef the Pharaoh',genre:'Hyphy', dur:201},
+    {id:'c26V7dXn6lA',title:'Big Tymin',          artist:'Nef the Pharaoh',genre:'Hyphy', dur:196},
+    {id:'9EcjWd-O4jI',title:'Bih Yah',            artist:'Nef the Pharaoh',genre:'Hyphy', dur:188},
+  ],
+  hyphy:[
+    {id:'VZt7J0iaUD0',title:'Choices (Yup)',       artist:'E-40',      genre:'Hyphy',dur:227},
+    {id:'qlp4SHWa-wM',title:'Blow the Whistle',    artist:'Too $hort', genre:'Hyphy',dur:234},
+    {id:'9EcjWd-O4jI',title:'Gas Pedal',           artist:'Sage Gemini',genre:'Hyphy',dur:231},
+    {id:'vJIULmMuEo0',title:'Get Out My Way',      artist:'Nef the Pharaoh',genre:'Hyphy',dur:189},
+    {id:'OxZzAWMNvBA',title:'Like Whoa',           artist:'Nef the Pharaoh',genre:'Hyphy',dur:201},
+    {id:'f2GKoXmS2Ig',title:'Function',            artist:'E-40',      genre:'Hyphy',dur:244},
+  ],
+  bayrnb:[
+    {id:'h2_ViDCDjgw',title:'Nights Like This',   artist:'Kehlani',genre:'R&B',dur:218},
+    {id:'tv9a6e9rXKc',title:'Focus',              artist:'H.E.R.',  genre:'R&B',dur:232},
+    {id:'6TE8zFGHdiE',title:'Best Part',          artist:'H.E.R.',  genre:'R&B',dur:256},
+    {id:'lmc21V-zBq0',title:'How Does It Feel',   artist:'Kamaiyah',genre:'R&B',dur:196},
+    {id:'6E7ZEDsNFkI',title:'Hard Place',         artist:'H.E.R.',  genre:'R&B',dur:214},
+    {id:'f8lmFSjbQzQ',title:'Gangsta',            artist:'Kehlani', genre:'R&B',dur:196},
+  ],
+  westcoast:[
+    {id:'VZt7J0iaUD0',title:'Choices (Yup)',       artist:'E-40',    genre:'Hyphy',  dur:227},
+    {id:'B6_iQvaIjXw',title:'Random',             artist:'G-Eazy',  genre:'Hip-Hop',dur:241},
+    {id:'XF8t2XTQQSI',title:'Me, Myself & I',     artist:'G-Eazy',  genre:'Hip-Hop',dur:234},
+    {id:'XNtTI3MJKyY',title:'Smooth Sailin',      artist:'Larry June',genre:'Rap',  dur:198},
+    {id:'7bMqGY9eTBQ',title:'Bladadah',           artist:'Mozzy',   genre:'Rap',    dur:205},
+    {id:'9EcjWd-O4jI',title:'Gas Pedal',          artist:'Sage Gemini',genre:'Bay', dur:231},
+  ],
+  latenight:[
+    {id:'h2_ViDCDjgw',title:'Nights Like This',   artist:'Kehlani',  genre:'R&B',  dur:218},
+    {id:'XNtTI3MJKyY',title:'Smooth Sailin',      artist:'Larry June',genre:'Rap', dur:198},
+    {id:'tv9a6e9rXKc',title:'Focus',              artist:'H.E.R.',   genre:'R&B',  dur:232},
+    {id:'G8Jjz1KJeaI',title:'Spinnin',           artist:'Larry June',genre:'Rap', dur:204},
+    {id:'6E7ZEDsNFkI',title:'Hard Place',         artist:'H.E.R.',   genre:'R&B',  dur:214},
+    {id:'dC_FK1VQHIU',title:'Cruise Tonite',      artist:'Larry June',genre:'Rap', dur:188},
+  ],
+  oakland:[
+    {id:'qlp4SHWa-wM',title:'Blow the Whistle',   artist:'Too $hort',genre:'Hyphy',dur:234},
+    {id:'VZt7J0iaUD0',title:'Choices (Yup)',       artist:'E-40',     genre:'Hyphy',dur:227},
+    {id:'lmc21V-zBq0',title:'How Does It Feel',   artist:'Kamaiyah', genre:'R&B',  dur:196},
+    {id:'7bMqGY9eTBQ',title:'Bladadah',           artist:'Mozzy',    genre:'Rap',  dur:205},
+    {id:'ZbaCPtPCT5E',title:'Gettin It',          artist:'Too $hort',genre:'Rap',  dur:218},
+    {id:'B6_iQvaIjXw',title:'Random',             artist:'G-Eazy',   genre:'Hip-Hop',dur:241},
+  ],
+};
+
+const ARTISTS_UI = [
+  {key:'e40',    name:'E-40',        genre:'Hyphy / Rap',  col:'#FF3737'},
+  {key:'kehlani',name:'Kehlani',     genre:'R&B / Pop',    col:'#FF6B9D'},
+  {key:'her',    name:'H.E.R.',      genre:'R&B / Soul',   col:'#9B59FF'},
+  {key:'larryjune',name:'Larry June',genre:'Smooth Rap',   col:'#06D6A0'},
+  {key:'geazy',  name:'G-Eazy',      genre:'Hip-Hop',      col:'#C8A84B'},
+  {key:'mozzy',  name:'Mozzy',       genre:'Sac Rap',      col:'#FF3737'},
+  {key:'tooshort',name:'Too $hort',  genre:'OG Oakland',   col:'#1460FF'},
+  {key:'kamaiyah',name:'Kamaiyah',   genre:'Bay R&B',      col:'#FF6B9D'},
+  {key:'iamsu',  name:'Iamsu!',      genre:'HBK Gang',     col:'#06D6A0'},
+  {key:'plo',    name:'P-Lo',        genre:'Bay Vibes',    col:'#9B59FF'},
+  {key:'nefpharaoh',name:'Nef Pharaoh',genre:'Vallejo',   col:'#C8A84B'},
+  {key:'bayrnb', name:'Bay R&B',     genre:'R&B Mix',      col:'#FF6B9D'},
+];
+
+const CHIPS_DATA = [
+  ['Bay Area Mix','bayarea'],['Hyphy Classics','hyphy'],
+  ['Bay R&B Vibes','bayrnb'],['West Coast','westcoast'],
+  ['Late Night Drive','latenight'],['Oakland','oakland'],
+  ['Larry June','larryjune'],['Kehlani','kehlani'],['H.E.R.','her'],
+];
+
+// ── State ──────────────────────────────────
+let queue=[], qIdx=0, curTrack=null, playing=false;
+let shuffle=false, repeat=false;
+let liked=JSON.parse(localStorage.getItem('aria_yt_liked')||'[]');
+let bmwSt='idle', bmwTimer=null;
+let tel={speed:0,rpm:800,temp:88,gear:'P'};
+let ytPlayer=null, ytReady=false;
+let progTimer=null, posS=0, durS=0;
+let curListId='home-tracks';
+
+// ── YouTube IFrame API ─────────────────────
+window.onYouTubeIframeAPIReady = () => {
+  ytPlayer = new YT.Player('yt-player',{
+    height:'1',width:'1',
+    playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,modestbranding:1,rel:0},
+    events:{
+      onReady: () => { ytReady=true; ytPlayer.setVolume(80); },
+      onStateChange: e => {
+        if(e.data===YT.PlayerState.PLAYING){ playing=true; document.getElementById('playbtn').textContent='⏸'; startProg(); }
+        else if(e.data===YT.PlayerState.PAUSED){ playing=false; document.getElementById('playbtn').textContent='▶'; clearInterval(progTimer); }
+        else if(e.data===YT.PlayerState.ENDED){ playing=false; document.getElementById('playbtn').textContent='▶'; clearInterval(progTimer); next(); }
+      }
+    }
+  });
+};
+
+const ytScript=document.createElement('script');
+ytScript.src='https://www.youtube.com/iframe_api';
+document.head.appendChild(ytScript);
+
+// ── Load/render tracks ─────────────────────
+function loadList(key, targetId) {
+  curListId = targetId;
+  const tracks = LIBRARY[key] || LIBRARY.bayarea;
+  queue = [...tracks];
+  renderTracks(queue, document.getElementById(targetId), targetId);
+  pg('home', document.querySelectorAll('.nb')[0]);
+}
+
+function renderTracks(tracks, el, listId) {
+  if(!tracks||!tracks.length){el.innerHTML='<div class="empty">No tracks</div>';return;}
+  el.innerHTML=`
+    <div class="tlist">
+      <div class="thdr"><span>#</span><span></span><span>TITLE</span><span>GENRE</span><span>TIME</span><span></span></div>
+      ${tracks.map((t,i)=>{
+        const isNow=curTrack&&curTrack.id===t.id;
+        return `
+        <div class="tr${isNow?' now':''}" id="trow-${t.id}" ondblclick="playAt(${i},'${listId}')">
+          <span class="tnum">${isNow?`<div class="viz${playing?'':' paused'}"><div class="vb"></div><div class="vb"></div><div class="vb"></div></div>`:i+1}</span>
+          <img class="tthumb" src="https://img.youtube.com/vi/${t.id}/default.jpg" alt="" loading="lazy"/>
+          <div class="tinfo"><div class="ttitle">${esc(t.title)}</div><div class="tartist">${esc(t.artist)}</div></div>
+          <div class="tgenre">${esc(t.genre)}</div>
+          <div class="tdur">${sToTime(t.dur)}</div>
+          <button class="lbtn${isLiked(t.id)?' L':''}" onclick="toggleLike(event,${i},'${listId}')">${isLiked(t.id)?'♥':'♡'}</button>
+        </div>`
+      }).join('')}
+    </div>`;
+}
+
+// ── Playback ───────────────────────────────
+function playAt(idx, listId) {
+  curListId = listId;
+  const t = queue[idx];
+  if(!t) return;
+  qIdx=idx; curTrack=t;
+  updateNP(t);
+  if(ytReady) {
+    ytPlayer.loadVideoById(t.id);
+    ytPlayer.playVideo();
+  }
+  // re-render to show playing indicator
+  const el=document.getElementById(listId);
+  if(el) renderTracks(queue, el, listId);
+}
+
+function updateNP(t) {
+  document.getElementById('npart').src=`https://img.youtube.com/vi/${t.id}/default.jpg`;
+  document.getElementById('nptitle').textContent=t.title;
+  document.getElementById('npartist').textContent=t.artist;
+  const lb=document.getElementById('nplbtn');
+  lb.textContent=isLiked(t.id)?'♥':'♡';
+  lb.className='lbtn'+(isLiked(t.id)?' L':'');
+  durS=t.dur;
+  document.getElementById('dt').textContent=sToTime(t.dur);
+}
+
+function startProg() {
+  clearInterval(progTimer);
+  progTimer=setInterval(()=>{
+    if(!ytReady||!playing) return;
+    try{
+      posS=ytPlayer.getCurrentTime()||posS;
+      durS=ytPlayer.getDuration()||durS;
+      const pct=durS>0?(posS/durS)*100:0;
+      document.getElementById('progf').style.width=pct+'%';
+      document.getElementById('ct').textContent=sToTime(posS);
+    }catch(e){}
+  },500);
+}
+
+function togglePlay() {
+  if(!curTrack){toast('Pick a track first','inf');return;}
+  if(!ytReady) return;
+  if(playing){ytPlayer.pauseVideo();}else{ytPlayer.playVideo();}
+}
+
+function next() {
+  if(!queue.length) return;
+  qIdx = shuffle ? Math.floor(Math.random()*queue.length) : (repeat ? qIdx : (qIdx+1)%queue.length);
+  playAt(qIdx, curListId);
+}
+function prev() {
+  if(posS>5){ytPlayer.seekTo(0);posS=0;return;}
+  qIdx=(qIdx-1+queue.length)%queue.length;
+  playAt(qIdx, curListId);
+}
+
+function seekTo(e) {
+  const bar=document.getElementById('prog');
+  const pct=(e.clientX-bar.getBoundingClientRect().left)/bar.offsetWidth;
+  if(ytReady&&durS) ytPlayer.seekTo(pct*durS);
+  document.getElementById('progf').style.width=(pct*100)+'%';
+}
+
+function setVol(v) { if(ytReady) ytPlayer.setVolume(v); }
+function toggleShuffle(){shuffle=!shuffle;document.getElementById('shuf').classList.toggle('on',shuffle)}
+function toggleRepeat(){repeat=!repeat;document.getElementById('rep').classList.toggle('on',repeat)}
+
+// ── Browse search ──────────────────────────
+function onSearch(v) {
+  if(v.length<2) return;
+  const lv=v.toLowerCase();
+  // search across all library keys
+  const results=[];
+  const seen=new Set();
+  Object.values(LIBRARY).flat().forEach(t=>{
+    if(!seen.has(t.id)&&(t.title.toLowerCase().includes(lv)||t.artist.toLowerCase().includes(lv)||t.genre.toLowerCase().includes(lv))){
+      seen.add(t.id); results.push(t);
+    }
+  });
+  queue=results.length?results:LIBRARY.bayarea;
+  renderTracks(queue, document.getElementById('browse-tracks'), 'browse-tracks');
+}
+
+// ── Likes ──────────────────────────────────
+function isLiked(id){return liked.some(t=>t.id===id)}
+function toggleLike(e,idx,listId){
+  e.stopPropagation();
+  const t=queue[idx];if(!t)return;
+  if(isLiked(t.id)){liked=liked.filter(x=>x.id!==t.id);toast('Removed','inf');}
+  else{liked.push(t);toast('♥ Saved','ok');}
+  localStorage.setItem('aria_yt_liked',JSON.stringify(liked));
+  renderLiked();
+  const btn=document.querySelector(`#trow-${t.id} .lbtn`);
+  if(btn){btn.textContent=isLiked(t.id)?'♥':'♡';btn.className='lbtn'+(isLiked(t.id)?' L':'');}
+  const lb=document.getElementById('nplbtn');
+  if(curTrack&&curTrack.id===t.id){lb.textContent=isLiked(t.id)?'♥':'♡';lb.className='lbtn'+(isLiked(t.id)?' L':'');}
+}
+function likeCur(){
+  if(!curTrack)return;
+  const idx=queue.findIndex(t=>t.id===curTrack.id);
+  toggleLike({stopPropagation:()=>{}},idx>=0?idx:0,curListId);
+}
+function renderLiked(){
+  document.getElementById('lct').textContent=liked.length+' TRACKS';
+  const el=document.getElementById('liked-tracks');
+  if(!liked.length){el.innerHTML='<div class="empty">Like tracks to save them here ♡</div>';return;}
+  const prev=queue;queue=liked;
+  renderTracks(liked,el,'liked-tracks');
+  queue=prev;
+}
+
+// ── BMW ────────────────────────────────────
+function openBMW(){document.getElementById('bov').classList.add('on');renderBMW()}
+function closeBMW(e){if(e.target===document.getElementById('bov'))document.getElementById('bov').classList.remove('on')}
+function renderBMW(){
+  const b=document.getElementById('bbody');
+  if(bmwSt==='idle'){
+    b.innerHTML=`
+      <p style="color:var(--muted);font-size:12px;line-height:1.7;margin-bottom:16px">
+        Pairs to your BMW X5 F15 HiFi system via Bluetooth A2DP. Audio transfers to your car the moment it connects. Steering-wheel media controls via AVRCP.
+      </p>
+      <div class="stbl">
+        ${[['Profile','A2DP + AVRCP 1.6'],['Codec','aptX HD · 48kHz/24-bit'],['Head Unit','BMW HiFi (non-HK/B&O)'],['Signal Tap','D-pillar rear left (LC2i)'],['Auto-Start','On engine ignition'],['Output','All speakers + sub']].map(([k,v])=>
+          `<div class="sr"><span class="sk">${k}</span><span class="sv">${v}</span></div>`
+        ).join('')}
+      </div>
+      <button class="cbtn" onclick="connectBMW()">🚗 &nbsp;Connect BMW X5</button>`;
+  } else if(bmwSt==='scanning'||bmwSt==='pairing'){
+    b.innerHTML=`<div style="text-align:center;padding:16px 0">
+      <div class="sring">🔵</div>
+      <div class="stxt">${bmwSt==='scanning'?'Scanning for BMW X5 F15…':'Pairing · Transferring audio…'}</div>
+    </div>`;
+  } else {
+    b.innerHTML=`
+      <div style="background:rgba(21,101,255,.06);border:1px solid rgba(21,101,255,.18);border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:#1460FF;letter-spacing:.1em;margin-bottom:10px">● LIVE TELEMETRY</div>
+        <div class="tgrid">
+          <div><div class="tv" id="ms">${tel.speed}<small>km/h</small></div><div class="tk">SPEED</div></div>
+          <div><div class="tv" id="mr">${tel.rpm}</div><div class="tk">RPM</div></div>
+          <div><div class="tv" id="mt">${tel.temp}<small>°C</small></div><div class="tk">COOLANT</div></div>
+          <div><div class="tv" id="mg">${tel.gear}</div><div class="tk">GEAR</div></div>
+          <div><div class="tv">aptX</div><div class="tk">CODEC</div></div>
+          <div><div class="tv">HiFi</div><div class="tk">SYSTEM</div></div>
+        </div>
+      </div>
+      <button class="dbtn" onclick="discBMW()">Disconnect</button>`;
+  }
+}
+
+async function connectBMW(){
+  bmwSt='scanning';renderBMW();
+  await sleep(1300);bmwSt='pairing';renderBMW();
+  await sleep(1700);bmwSt='connected';
+  document.getElementById('bmw-btn').classList.add('conn');
+  document.getElementById('blbl').textContent='X5 ✓';
+  document.getElementById('bmini').classList.add('on');
+  document.getElementById('bstrip').classList.add('on');
+  startTel();renderBMW();
+  document.getElementById('bov').classList.remove('on');
+  toast('🚗  BMW X5 connected · aptX HD · Audio transferred','bmw');
+  if(!playing&&curTrack){ytPlayer?.playVideo();}
+}
+function discBMW(){
+  bmwSt='idle';clearInterval(bmwTimer);
+  document.getElementById('bmw-btn').classList.remove('conn');
+  document.getElementById('blbl').textContent='BMW X5';
+  document.getElementById('bmini').classList.remove('on');
+  document.getElementById('bstrip').classList.remove('on');
+  document.getElementById('bov').classList.remove('on');
+}
+function startTel(){
+  clearInterval(bmwTimer);
+  bmwTimer=setInterval(()=>{
+    tel.speed=Math.max(0,Math.min(180,tel.speed+(Math.random()*12-5)))|0;
+    tel.rpm=Math.max(800,Math.min(6500,tel.rpm+(Math.random()*400-180)))|0;
+    tel.temp=Math.max(85,Math.min(102,tel.temp+(Math.random()*2-1)))|0;
+    tel.gear=tel.speed<10?'P':['2','3','4','5','6'][Math.floor(tel.speed/32)];
+    const g=id=>document.getElementById(id);
+    if(g('ls'))g('ls').innerHTML=`${tel.speed}<sub>km/h</sub>`;
+    if(g('lr'))g('lr').textContent=tel.rpm.toLocaleString();
+    if(g('lt'))g('lt').innerHTML=`${tel.temp}<sub>°C</sub>`;
+    if(g('lg'))g('lg').textContent=tel.gear;
+    if(g('ms'))g('ms').innerHTML=`${tel.speed}<small>km/h</small>`;
+    if(g('mr'))g('mr').textContent=tel.rpm.toLocaleString();
+    if(g('mt'))g('mt').innerHTML=`${tel.temp}<small>°C</small>`;
+    if(g('mg'))g('mg').textContent=tel.gear;
+  },1800);
+}
+
+// ── Page nav ───────────────────────────────
+function pg(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+name)?.classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(name==='liked')renderLiked();
+}
+function sa(el){document.querySelectorAll('.si').forEach(s=>s.classList.remove('on'));el.classList.add('on')}
+
+// ── Build UI ───────────────────────────────
+function buildArtists(){
+  document.getElementById('agrid').innerHTML=ARTISTS_UI.map(a=>`
+    <div class="ac" onclick="loadList('${a.key}','home-tracks');sa(document.querySelector('.si'))">
+      <div class="ac-art" style="background:linear-gradient(135deg,${a.col}15,${a.col}28)">
+        <span style="color:${a.col};position:relative;z-index:1">${a.name[0]}</span>
+      </div>
+      <div class="ac-info"><div class="ac-name">${a.name}</div><div class="ac-genre">${a.genre}</div></div>
+    </div>`).join('');
+}
+function buildChips(){
+  document.getElementById('chips').innerHTML=CHIPS_DATA.map(([l,k])=>
+    `<div class="chip" onclick="loadChip('${k}')">${l}</div>`
+  ).join('');
+}
+function loadChip(key){
+  queue=[...(LIBRARY[key]||LIBRARY.bayarea)];
+  renderTracks(queue,document.getElementById('browse-tracks'),'browse-tracks');
+  curListId='browse-tracks';
+}
+
+// ── Toast ──────────────────────────────────
+let tTimer;
+function toast(msg,type='inf'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className=`on ${type}`;
+  clearTimeout(tTimer);
+  tTimer=setTimeout(()=>el.classList.remove('on'),3000);
+}
+
+// ── Utils ──────────────────────────────────
+function sToTime(s){s=Math.floor(s||0);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// ── Init ───────────────────────────────────
+buildArtists();
+buildChips();
+renderLiked();
+// Auto-load Bay Area mix
+loadList('bayarea','home-tracks');
+</script>
+</body>
+</html>
